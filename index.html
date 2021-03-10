@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>canvas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="canvas">
+    </canvas>
+    <script>
+        let canvas = document.getElementById('canvas');
+        let ctx = canvas.getContext('2d');
+        canvas.width = document.documentElement.clientWidth;
+        canvas.height = document.documentElement.clientHeight;
+        console.log(canvas.width, canvas.height);
+        ctx.lineWidth = 10;
+        ctx.lineCap = "round";
+        let last;
+        let painting = false;
+        let supportsTouch = 'ontouchstart' in window || navigator.msMaxTouchPoints;
+        console.log(supportsTouch);
+        if (supportsTouch) {
+            canvas.ontouchstart = (e) => {
+                last = [e.touches[0].clientX, e.touches[0].clientY];
+            }
+            canvas.ontouchmove = (e) => {
+                drawLine(last[0], last[1], e.touches[0].clientX, e.touches[0].clientY)
+                last = [e.touches[0].clientX, e.touches[0].clientY];
+            }
+        } else {
+                canvas.onmousedown = (e) => {
+                painting = true
+                last = [e.clientX, e.clientY];
+            }
+            canvas.onmousemove = (e) => {
+                if (painting) {
+                    drawLine(last[0], last[1], e.clientX, e.clientY)
+                    last = [e.clientX, e.clientY];
+                }
+            }
+            canvas.onmouseup = () => {
+                painting = false;
+            }
+        }
+        function drawLine(beginX, beginY, finishX, finishY) {
+            ctx.beginPath();
+            ctx.moveTo(beginX, beginY);
+            ctx.lineTo(finishX, finishY);
+            ctx.stroke();
+        }
+       
+    </script>
+    
+</body>
+</html>
